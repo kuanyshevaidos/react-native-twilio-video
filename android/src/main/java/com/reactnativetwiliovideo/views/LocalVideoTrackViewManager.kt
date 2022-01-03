@@ -19,7 +19,7 @@ class LocalVideoTrackViewManager(private val context: ReactApplicationContext) :
 
   @ReactProp(name = "name")
   fun setName(view: VideoTrackView, name: String?) {
-    val localVideoTrack = if (name != null) context.getNativeModule(TwilioVideoModule::class.java).findLocalVideoTrack(name) else null
+    val localVideoTrack = if (name != null) context.getNativeModule(TwilioVideoModule::class.java)?.findLocalVideoTrack(name) else null
     view.videoTrack = localVideoTrack
   }
 

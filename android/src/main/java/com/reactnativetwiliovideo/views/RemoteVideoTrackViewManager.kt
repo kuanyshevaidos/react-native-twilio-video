@@ -19,7 +19,7 @@ class RemoteVideoTrackViewManager(private val context: ReactApplicationContext) 
 
   @ReactProp(name = "sid")
   fun setName(view: VideoTrackView, sid: String?) {
-    val localVideoTrack = if (sid != null) context.getNativeModule(TwilioVideoModule::class.java).findRemoteVideoTrack(sid) else null
+    val localVideoTrack = if (sid != null) context.getNativeModule(TwilioVideoModule::class.java)?.findRemoteVideoTrack(sid) else null
     view.videoTrack = localVideoTrack
   }
 
