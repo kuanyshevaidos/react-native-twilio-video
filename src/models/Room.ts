@@ -2,7 +2,7 @@ import type { EmitterSubscription } from 'react-native';
 import type {
   LocalAudioTrack,
   LocalVideoTrack,
-} from 'react-native-twilio-video';
+} from '../index';
 import {
   TwilioVideo,
   TwilioVideoConnectOptions,

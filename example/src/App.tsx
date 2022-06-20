@@ -18,7 +18,7 @@ import TwilioVideo, {
   RemoteParticipant,
   RemoteVideoTrackView,
   Room,
-} from 'react-native-twilio-video';
+} from '../../src/index';
 
 export default function App() {
   const [cameras, setCameras] = useState<Camera[]>([]);
