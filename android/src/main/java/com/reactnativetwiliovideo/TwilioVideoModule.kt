@@ -8,7 +8,8 @@ import com.reactnativetwiliovideo.models.*
 import com.twilio.video.*
 import tvi.webrtc.Camera1Enumerator
 import java.util.logging.Logger
-
+import com.twilio.audioswitch.AudioDevice
+import com.twilio.audioswitch.AudioSwitch
 
 @ReactModule(name = "TwilioVideo")
 class TwilioVideoModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), Room.Listener, LocalParticipant.Listener, RemoteParticipant.Listener, TwilioVideoSDKReactDataSource {
@@ -18,6 +19,7 @@ class TwilioVideoModule(reactContext: ReactApplicationContext) : ReactContextBas
 
   private val logger = Logger.getLogger("TwilioVideoModule")
   private val gson = Gson()
+  private val audioSwitch = AudioSwitch(reactContext)
 
   private val rooms = mutableListOf<Room>()
   private val localAudioTracksByName = mutableMapOf<String, LocalAudioTrack>()
@@ -77,6 +79,20 @@ class TwilioVideoModule(reactContext: ReactApplicationContext) : ReactContextBas
         this,
         this
       )
+     audioSwitch.start { audioDevices, selectedDevice ->
+      // TODO update UI with audio devices
+     }
+
+     val devices: List<AudioDevice> = audioSwitch.availableAudioDevices
+     val selectedDevice: AudioDevice? = audioSwitch.selectedAudioDevice
+
+     if (selectedDevice is AudioDevice.Earpiece) {
+        devices.find { it is AudioDevice.Speakerphone }?.let {
+            audioSwitch.selectDevice(it)
+            audioSwitch.activate()
+        }
+     }
+
       rooms.add(room)
       promise.resolve(room.toReactAttributes())
     } catch (exception: Exception) {
@@ -87,6 +103,7 @@ class TwilioVideoModule(reactContext: ReactApplicationContext) : ReactContextBas
 
   @ReactMethod
   fun disconnect(sid: String, promise: Promise) {
+    audioSwitch.stop()
     val room = findRoom(sid)
     if (room != null) {
       room.disconnect()
