@@ -10,7 +10,8 @@ fun Room.toReactAttributes(): WritableMap {
   attributes.putString("sid", sid)
   attributes.putString("name", name)
   attributes.putString("state", state.toReactState())
-  attributes.putBoolean("isRecording", isRecording)
+  // hotfix to prevent crashes.
+  // attributes.putBoolean("isRecording", isRecording)
   attributes.putMap("localParticipant", localParticipant?.toReactAttributes())
 
   val remoteParticipantsReactAttributes = Arguments.createArray()
