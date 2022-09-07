@@ -89,9 +89,10 @@ class TwilioVideoModule(reactContext: ReactApplicationContext) : ReactContextBas
      if (selectedDevice is AudioDevice.Earpiece) {
         devices.find { it is AudioDevice.Speakerphone }?.let {
             audioSwitch.selectDevice(it)
-            audioSwitch.activate()
         }
      }
+
+     audioSwitch.activate()
 
       rooms.add(room)
       promise.resolve(room.toReactAttributes())
