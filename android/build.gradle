@@ -129,5 +129,4 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'com.twilio:video-android:6.0.0'
   implementation 'com.google.code.gson:gson:2.8.6'
-  implementation 'com.twilio:audioswitch:1.1.5'
 }
