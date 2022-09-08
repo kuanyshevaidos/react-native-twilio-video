@@ -80,19 +80,13 @@ class TwilioVideoModule(reactContext: ReactApplicationContext) : ReactContextBas
         this
       )
      audioSwitch.start { audioDevices, selectedDevice ->
-      // TODO update UI with audio devices
-     }
-
-     val devices: List<AudioDevice> = audioSwitch.availableAudioDevices
-     val selectedDevice: AudioDevice? = audioSwitch.selectedAudioDevice
-
-     if (selectedDevice is AudioDevice.Earpiece) {
-        devices.find { it is AudioDevice.Speakerphone }?.let {
-            audioSwitch.selectDevice(it)
+        if (selectedDevice is AudioDevice.Earpiece) {
+            audioDevices.find { it is AudioDevice.Speakerphone }?.let {
+                audioSwitch.selectDevice(it)
+                audioSwitch.activate()
+            }
         }
      }
-
-     audioSwitch.activate()
 
       rooms.add(room)
       promise.resolve(room.toReactAttributes())
