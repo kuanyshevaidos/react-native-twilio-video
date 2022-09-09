@@ -17,7 +17,6 @@ class TwilioVideoModule(reactContext: ReactApplicationContext) : ReactContextBas
 
   private val logger = Logger.getLogger("TwilioVideoModule")
   private val gson = Gson()
-  private val audioSwitch = AudioSwitch(reactContext)
 
   private val rooms = mutableListOf<Room>()
   private val localAudioTracksByName = mutableMapOf<String, LocalAudioTrack>()
