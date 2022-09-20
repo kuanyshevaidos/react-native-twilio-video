@@ -38,7 +38,6 @@ type RemoteParticipantEventType =
   | 'videoTrackUnsubscribed';
 
 export interface RemoteParticipantAttributes {
-  connected: boolean;
   identity: string;
   sid: string;
   networkQualityLevel: string;
@@ -52,7 +51,6 @@ interface RemoteParticipantEventData {
 }
 
 export default class RemoteParticipant implements RemoteParticipantAttributes {
-  connected: boolean;
   identity: string;
   sid: string;
   networkQualityLevel: string;
@@ -68,7 +66,6 @@ export default class RemoteParticipant implements RemoteParticipantAttributes {
   remoteDataTrackIndicesToDelete?: number[];
 
   constructor({
-    connected,
     identity,
     sid,
     networkQualityLevel,
@@ -76,7 +73,6 @@ export default class RemoteParticipant implements RemoteParticipantAttributes {
     remoteVideoTracks,
     remoteDataTracks,
   }: RemoteParticipantAttributes) {
-    this.connected = connected;
     this.identity = identity;
     this.sid = sid;
     this.networkQualityLevel = networkQualityLevel;
@@ -633,7 +629,6 @@ export default class RemoteParticipant implements RemoteParticipantAttributes {
   };
 
   mergeRemoteParticipantAttributesBegin = ({
-    connected,
     identity,
     sid,
     networkQualityLevel,
@@ -649,7 +644,6 @@ export default class RemoteParticipant implements RemoteParticipantAttributes {
       throw 'attempting to merge remote participant attributes before completing previous merge operation';
     }
 
-    this.connected = connected;
     this.identity = identity;
     this.sid = sid;
     this.networkQualityLevel = networkQualityLevel;

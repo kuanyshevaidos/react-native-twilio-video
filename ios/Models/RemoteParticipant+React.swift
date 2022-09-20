@@ -9,7 +9,6 @@ import Foundation
 extension RemoteParticipant {
     func toReactAttributes() -> [String: Any] {
         return [
-            "connected": isConnected,
             "identity": identity,
             "sid": sid!,
             "networkQualityLevel": networkQualityLevel.toReactNetworkQualityLevel(),
