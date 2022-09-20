@@ -10,8 +10,7 @@ fun Room.toReactAttributes(): WritableMap {
   attributes.putString("sid", sid)
   attributes.putString("name", name)
   attributes.putString("state", state.toReactState())
-  // hotfix to prevent crashes.
-  // attributes.putBoolean("isRecording", isRecording)
+  attributes.putBoolean("isRecording", isRecording)
   attributes.putMap("localParticipant", localParticipant?.toReactAttributes())
 
   val remoteParticipantsReactAttributes = Arguments.createArray()
@@ -137,7 +136,6 @@ fun LocalDataTrack.toReactAttributes(): WritableMap {
 fun RemoteParticipant.toReactAttributes(): WritableMap {
   val attributes = Arguments.createMap()
 
-  attributes.putBoolean("connected", state == Participant.State.CONNECTED)
   attributes.putString("identity", identity)
   attributes.putString("sid", sid)
   attributes.putString("networkQualityLevel", networkQualityLevel.toReactNetworkQualityLevel())
