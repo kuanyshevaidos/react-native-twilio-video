@@ -654,7 +654,6 @@ export default function App() {
                   <React.Fragment key={remoteParticipant.sid}>
                     <Text>RemoteParticipant</Text>
                     <View style={styles.indent}>
-                      <Text>connected: {remoteParticipant.connected}</Text>
                       <Text>identity: {remoteParticipant.identity}</Text>
                       <Text>sid: {remoteParticipant.sid}</Text>
                       <Text>
