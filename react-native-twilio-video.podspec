@@ -18,6 +18,6 @@ Pod::Spec.new do |s|
 
 
   s.dependency "React"
-  s.dependency 'TwilioVideo', '~> 5.2'
+  s.dependency 'TwilioVideo', '~> 5.5'
   s.dependency 'DictionaryCoding', '~> 1.0'
 end
