@@ -5,7 +5,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
     override class func requiresMainQueueSetup() -> Bool {
         return false
     }
-    
+
     var rooms = [Room]()
     var localParticipants: [LocalParticipant] {
         get {
@@ -37,37 +37,37 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             return remoteVideoTrackPublications.compactMap { $0.remoteTrack }
         }
     }
-    
+
     var localAudioTracksByName = [String: LocalAudioTrack]()
     var localVideoTracksByName = [String: LocalVideoTrack]()
-    
+
     private func findRoom(sid: String) -> Room? {
         return rooms.first { $0.sid == sid }
     }
-    
+
     private func findLocalParticipant(sid: String) -> LocalParticipant? {
         return localParticipants.first { $0.sid == sid }
     }
-    
+
     func findLocalAudioTrack(name: String) -> LocalAudioTrack? {
         return localAudioTracksByName[name]
     }
-    
+
     func findLocalVideoTrack(name: String) -> LocalVideoTrack? {
         return localVideoTracksByName[name]
     }
-    
+
     private func findRemoteAudioTrack(sid: String) -> RemoteAudioTrack? {
         return remoteAudioTracks.first { $0.sid == sid }
     }
-    
+
     func findRemoteVideoTrack(sid: String) -> RemoteVideoTrack? {
         return remoteVideoTracks.first { $0.sid == sid }
     }
-    
+
     var isObserving: Bool = false
     let decoder = DictionaryDecoder()
-    
+
     @objc(connect:withOptions:resolver:rejecter:)
     func connect(
         token: String,
@@ -83,7 +83,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
                 delegate: self,
                 dataSource: self
             )
-            
+
             do {
                 try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .videoChat, options: .mixWithOthers)
                 if #available(iOS 14.5, *) {
@@ -100,24 +100,23 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("422", "Unable to connect", error)
         }
     }
-    
+
     @objc(disconnect:resolver:rejecter:)
     func disconnect(sid: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         let maybeRoom = findRoom(sid: sid)
         if let room = maybeRoom {
             room.disconnect()
-            rooms.removeAll { $0.sid == sid }
             resolve(true)
         } else {
             reject("404", "Room not found", nil)
         }
     }
-    
+
     @objc(listCameras:rejecter:)
     func listCameras(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         resolve(AVCaptureDevice.listCameras().map { $0.toReactAttributes() })
     }
-    
+
     @objc(updateLocalAudioTrack:params:resolver:rejecter:)
     func updateLocalAudioTrack(name: String, params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         if let localAudioTrack = findLocalAudioTrack(name: name) {
@@ -132,7 +131,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "LocalAudioTrack not found", nil)
         }
     }
-    
+
     @objc(updateLocalVideoTrack:params:resolver:rejecter:)
     func updateLocalVideoTrack(name: String, params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         if let localVideoTrack = findLocalVideoTrack(name: name) {
@@ -147,7 +146,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "LocalVideoTrack not found", nil)
         }
     }
-    
+
     @objc(updateRemoteAudioTrack:params:resolver:rejecter:)
     func updateRemoteAudioTrack(sid: String, params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         if let remoteAudioTrack = findRemoteAudioTrack(sid: sid) {
@@ -162,7 +161,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "RemoteAudioTrack not found", nil)
         }
     }
-    
+
     @objc(createLocalAudioTrack:resolver:rejecter:)
     func createLocalAudioTrack(params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         do {
@@ -180,7 +179,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("422", "Unable to create local audio track", error)
         }
     }
-    
+
     @objc(createLocalVideoTrack:resolver:rejecter:)
     func createLocalVideoTrack(params: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         do {
@@ -191,7 +190,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
                     return
                 }
             }
-            
+
             LocalVideoTrack.createFromReact(params: localVideoTrackCreateParams) { (localVideoTrack, error) in
                 if let localVideoTrack = localVideoTrack, error == nil {
                     self.localVideoTracksByName[localVideoTrack.name] = localVideoTrack
@@ -204,7 +203,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("422", "Unable to create local video track", error)
         }
     }
-    
+
     @objc(destroyLocalAudioTrack:resolver:rejecter:)
     func destroyLocalAudioTrack(name: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         if let localAudioTrack = localAudioTracksByName.removeValue(forKey: name) {
@@ -219,7 +218,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "Local video track not found", nil)
         }
     }
-    
+
     @objc(destroyLocalVideoTrack:resolver:rejecter:)
     func destroyLocalVideoTrack(name: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         if let localVideoTrack = self.localVideoTracksByName.removeValue(forKey: name) {
@@ -228,7 +227,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
                     localParticipant.unpublishVideoTrack(localVideoTrack)
                 }
             }
-            
+
             localVideoTrack.destroyFromReact() { (error) in
                 if let error = error {
                     reject("422", error.localizedDescription, error)
@@ -240,7 +239,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "Local video track not found", nil)
         }
     }
-    
+
     @objc(publishLocalAudioTrack:resolver:rejecter:)
     func publishLocalAudioTrack(params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         if let localAudioTrackName = params["localAudioTrackName"] as? String,
@@ -252,7 +251,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "Local audio track or participant not found", nil)
         }
     }
-    
+
     @objc(publishLocalVideoTrack:resolver:rejecter:)
     func publishLocalVideoTrack(params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         if let localVideoTrackName = params["localVideoTrackName"] as? String,
@@ -264,7 +263,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "Local video track or participant not found", nil)
         }
     }
-    
+
     @objc(unpublishLocalAudioTrack:resolver:rejecter:)
     func unpublishLocalAudioTrack(params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         if let localAudioTrackName = params["localAudioTrackName"] as? String,
@@ -276,7 +275,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "Local audio track or participant not found", nil)
         }
     }
-    
+
     @objc(unpublishLocalVideoTrack:resolver:rejecter:)
     func unpublishLocalVideoTrack(params: [String: Any], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         if let localVideoTrackName = params["localVideoTrackName"] as? String,
@@ -288,7 +287,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             reject("404", "Local video track or participant not found", nil)
         }
     }
-    
+
     override func supportedEvents() -> [String] {
         return [
             "Room.connected",
@@ -301,7 +300,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             "Room.recordingStarted",
             "Room.recordingStopped",
             "Room.dominantSpeakerChanged",
-            
+
             "RemoteParticipant.audioTrackDisabled",
             "RemoteParticipant.audioTrackEnabled",
             "RemoteParticipant.audioTrackPublished",
@@ -327,7 +326,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             "RemoteParticipant.videoTrackSwitchedOn",
             "RemoteParticipant.videoTrackUnpublished",
             "RemoteParticipant.videoTrackUnsubscribed",
-            
+
             "LocalParticipant.audioTrackPublicationFailed",
             "LocalParticipant.audioTrackPublished",
             "LocalParticipant.dataTrackPublicationFailed",
@@ -337,17 +336,17 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             "LocalParticipant.videoTrackPublished"
         ]
     }
-    
+
     override func startObserving() {
         super.startObserving()
         isObserving = true
     }
-    
+
     override func stopObserving() {
         super.stopObserving()
         isObserving = false
     }
-    
+
     func roomDidConnect(room: Room) {
         room.localParticipant!.delegate = self
         room.remoteParticipants.forEach { $0.delegate = self }
@@ -359,7 +358,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             body: [ "room": room.toReactAttributes() ]
         )
     }
-    
+
     func roomDidFailToConnect(room: Room, error: Error) {
         if (!isObserving) {
             return
@@ -369,7 +368,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             body: [ "room": room.toReactAttributes(), "error": error.localizedDescription ]
         )
     }
-    
+
     func roomDidDisconnect(room: Room, error: Error?) {
         if (!isObserving) {
             return
@@ -378,8 +377,9 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             withName: "Room.disconnected",
             body: [ "room": room.toReactAttributes(), "error": error?.localizedDescription as Any ]
         )
+        rooms.removeAll { $0.sid == room.sid }
     }
-    
+
     func roomIsReconnecting(room: Room, error: Error) {
         if (!isObserving) {
             return
@@ -389,7 +389,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             body: [ "room": room.toReactAttributes(), "error": error.localizedDescription ]
         )
     }
-    
+
     func roomDidReconnect(room: Room) {
         if (!isObserving) {
             return
@@ -399,7 +399,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             body: [ "room": room.toReactAttributes() ]
         )
     }
-    
+
     func participantDidConnect(room: Room, participant: RemoteParticipant) {
         participant.delegate = self
         if (!isObserving) {
@@ -413,7 +413,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func participantDidDisconnect(room: Room, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -426,7 +426,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func roomDidStartRecording(room: Room) {
         if (!isObserving) {
             return
@@ -436,7 +436,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             body: [ "room": room.toReactAttributes() ]
         )
     }
-    
+
     func roomDidStopRecording(room: Room) {
         if (!isObserving) {
             return
@@ -446,7 +446,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             body: [ "room": room.toReactAttributes() ]
         )
     }
-    
+
     func dominantSpeakerDidChange(room: Room, participant: RemoteParticipant?) {
         if (!isObserving) {
             return
@@ -459,7 +459,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidPublishVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
         if (!isObserving) {
             return
@@ -472,7 +472,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidUnpublishVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
         if (!isObserving) {
             return
@@ -485,7 +485,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidPublishAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
         if (!isObserving) {
             return
@@ -498,7 +498,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidUnpublishAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
         if (!isObserving) {
             return
@@ -511,7 +511,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidPublishDataTrack(participant: RemoteParticipant, publication: RemoteDataTrackPublication) {
         if (!isObserving) {
             return
@@ -524,7 +524,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidUnpublishDataTrack(participant: RemoteParticipant, publication: RemoteDataTrackPublication) {
         if (!isObserving) {
             return
@@ -537,7 +537,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidEnableVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
         if (!isObserving) {
             return
@@ -550,7 +550,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidDisableVideoTrack(participant: RemoteParticipant, publication: RemoteVideoTrackPublication) {
         if (!isObserving) {
             return
@@ -563,7 +563,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidEnableAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
         if (!isObserving) {
             return
@@ -576,7 +576,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidDisableAudioTrack(participant: RemoteParticipant, publication: RemoteAudioTrackPublication) {
         if (!isObserving) {
             return
@@ -589,7 +589,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didSubscribeToVideoTrack(videoTrack: RemoteVideoTrack, publication: RemoteVideoTrackPublication, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -603,7 +603,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didFailToSubscribeToVideoTrack(publication: RemoteVideoTrackPublication, error: Error, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -617,7 +617,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didUnsubscribeFromVideoTrack(videoTrack: RemoteVideoTrack, publication: RemoteVideoTrackPublication, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -631,7 +631,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didSubscribeToAudioTrack(audioTrack: RemoteAudioTrack, publication: RemoteAudioTrackPublication, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -645,7 +645,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didFailToSubscribeToAudioTrack(publication: RemoteAudioTrackPublication, error: Error, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -659,7 +659,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didUnsubscribeFromAudioTrack(audioTrack: RemoteAudioTrack, publication: RemoteAudioTrackPublication, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -673,7 +673,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didSubscribeToDataTrack(dataTrack: RemoteDataTrack, publication: RemoteDataTrackPublication, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -687,7 +687,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didFailToSubscribeToDataTrack(publication: RemoteDataTrackPublication, error: Error, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -701,7 +701,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func didUnsubscribeFromDataTrack(dataTrack: RemoteDataTrack, publication: RemoteDataTrackPublication, participant: RemoteParticipant) {
         if (!isObserving) {
             return
@@ -715,7 +715,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantNetworkQualityLevelDidChange(participant: RemoteParticipant, networkQualityLevel: NetworkQualityLevel) {
         if (!isObserving) {
             return
@@ -728,7 +728,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantSwitchedOffVideoTrack(participant: RemoteParticipant, track: RemoteVideoTrack) {
         if (!isObserving) {
             return
@@ -741,7 +741,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantSwitchedOnVideoTrack(participant: RemoteParticipant, track: RemoteVideoTrack) {
         if (!isObserving) {
             return
@@ -754,7 +754,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidChangeAudioTrackPublishPriority(participant: RemoteParticipant, priority: Track.Priority, publication: RemoteAudioTrackPublication) {
         if (!isObserving) {
             return
@@ -768,7 +768,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidChangeVideoTrackPublishPriority(participant: RemoteParticipant, priority: Track.Priority, publication: RemoteVideoTrackPublication) {
         if (!isObserving) {
             return
@@ -782,7 +782,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func remoteParticipantDidChangeDataTrackPublishPriority(participant: RemoteParticipant, priority: Track.Priority, publication: RemoteDataTrackPublication) {
         if (!isObserving) {
             return
@@ -796,7 +796,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func localParticipantDidPublishAudioTrack(participant: LocalParticipant, audioTrackPublication: LocalAudioTrackPublication) {
         if (!isObserving) {
             return
@@ -809,7 +809,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func localParticipantDidFailToPublishAudioTrack(participant: LocalParticipant, audioTrack: LocalAudioTrack, error: Error) {
         if (!isObserving) {
             return
@@ -823,7 +823,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func localParticipantDidPublishDataTrack(participant: LocalParticipant, dataTrackPublication: LocalDataTrackPublication) {
         if (!isObserving) {
             return
@@ -836,7 +836,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func localParticipantDidFailToPublishDataTrack(participant: LocalParticipant, dataTrack: LocalDataTrack, error: Error) {
         if (!isObserving) {
             return
@@ -850,7 +850,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func localParticipantDidPublishVideoTrack(participant: LocalParticipant, videoTrackPublication: LocalVideoTrackPublication) {
         if (!isObserving) {
             return
@@ -863,7 +863,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func localParticipantDidFailToPublishVideoTrack(participant: LocalParticipant, videoTrack: LocalVideoTrack, error: Error) {
         if (!isObserving) {
             return
@@ -877,7 +877,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
             ]
         )
     }
-    
+
     func localParticipantNetworkQualityLevelDidChange(participant: LocalParticipant, networkQualityLevel: NetworkQualityLevel) {
         if (!isObserving) {
             return
