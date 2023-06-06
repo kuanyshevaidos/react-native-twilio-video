@@ -84,7 +84,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
                 dataSource: self
             )
 
-            do {
+            /*do {
                 try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .videoChat, options: .mixWithOthers)
                 if #available(iOS 14.5, *) {
                     try AVAudioSession.sharedInstance().setPrefersNoInterruptionsFromSystemAlerts(true)
@@ -92,7 +92,7 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
                 try AVAudioSession.sharedInstance().setActive(true)
             } catch {
                 print("Speaker error : \(error)")
-            }
+            }*/
 
             rooms.append(room)
             resolve(room.toReactAttributes())
