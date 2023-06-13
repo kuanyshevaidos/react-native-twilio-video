@@ -801,81 +801,93 @@ class TwilioVideo: RCTEventEmitter, RoomDelegate, RemoteParticipantDelegate, Loc
         if (!isObserving) {
             return
         }
-        sendEvent(
-            withName: "LocalParticipant.audioTrackPublished",
-            body: [
-                "participant": participant.toReactAttributes(),
-                "audioTrackPublication": audioTrackPublication.toReactAttributes()
-            ]
-        )
+        DispatchQueue.main.async {
+            self.sendEvent(
+                withName: "LocalParticipant.audioTrackPublished",
+                body: [
+                    "participant": participant.toReactAttributes(),
+                    "audioTrackPublication": audioTrackPublication.toReactAttributes()
+                ]
+            )
+        }
     }
 
     func localParticipantDidFailToPublishAudioTrack(participant: LocalParticipant, audioTrack: LocalAudioTrack, error: Error) {
         if (!isObserving) {
             return
         }
-        sendEvent(
-            withName: "LocalParticipant.audioTrackPublicationFailed",
-            body: [
-                "participant": participant.toReactAttributes(),
-                "audioTrack": audioTrack.toReactAttributes(),
-                "error": error.localizedDescription
-            ]
-        )
+        DispatchQueue.main.async {
+            self.sendEvent(
+                withName: "LocalParticipant.audioTrackPublicationFailed",
+                body: [
+                    "participant": participant.toReactAttributes(),
+                    "audioTrack": audioTrack.toReactAttributes(),
+                    "error": error.localizedDescription
+                ]
+            )
+        }
     }
 
     func localParticipantDidPublishDataTrack(participant: LocalParticipant, dataTrackPublication: LocalDataTrackPublication) {
         if (!isObserving) {
             return
         }
-        sendEvent(
-            withName: "LocalParticipant.dataTrackPublished",
-            body: [
-                "participant": participant.toReactAttributes(),
-                "dataTrackPublication": dataTrackPublication.toReactAttributes()
-            ]
-        )
+        DispatchQueue.main.async {
+            self.sendEvent(
+                withName: "LocalParticipant.dataTrackPublished",
+                body: [
+                    "participant": participant.toReactAttributes(),
+                    "dataTrackPublication": dataTrackPublication.toReactAttributes()
+                ]
+            )
+        }
     }
 
     func localParticipantDidFailToPublishDataTrack(participant: LocalParticipant, dataTrack: LocalDataTrack, error: Error) {
         if (!isObserving) {
             return
         }
-        sendEvent(
-            withName: "LocalParticipant.dataTrackPublicationFailed",
-            body: [
-                "participant": participant.toReactAttributes(),
-                "dataTrack": dataTrack.toReactAttributes(),
-                "error": error.localizedDescription
-            ]
-        )
+        DispatchQueue.main.async {
+            self.sendEvent(
+                withName: "LocalParticipant.dataTrackPublicationFailed",
+                body: [
+                    "participant": participant.toReactAttributes(),
+                    "dataTrack": dataTrack.toReactAttributes(),
+                    "error": error.localizedDescription
+                ]
+            )
+        }
     }
 
     func localParticipantDidPublishVideoTrack(participant: LocalParticipant, videoTrackPublication: LocalVideoTrackPublication) {
         if (!isObserving) {
             return
         }
-        sendEvent(
-            withName: "LocalParticipant.videoTrackPublished",
-            body: [
-                "participant": participant.toReactAttributes(),
-                "videoTrackPublication": videoTrackPublication.toReactAttributes()
-            ]
-        )
+        DispatchQueue.main.async {
+            self.sendEvent(
+                withName: "LocalParticipant.videoTrackPublished",
+                body: [
+                    "participant": participant.toReactAttributes(),
+                    "videoTrackPublication": videoTrackPublication.toReactAttributes()
+                ]
+            )
+        }
     }
 
     func localParticipantDidFailToPublishVideoTrack(participant: LocalParticipant, videoTrack: LocalVideoTrack, error: Error) {
         if (!isObserving) {
             return
         }
-        sendEvent(
-            withName: "LocalParticipant.videoTrackPublicationFailed",
-            body: [
-                "participant": participant.toReactAttributes(),
-                "videoTrack": videoTrack.toReactAttributes(),
-                "error": error.localizedDescription
-            ]
-        )
+        DispatchQueue.main.async {
+            self.sendEvent(
+                withName: "LocalParticipant.videoTrackPublicationFailed",
+                body: [
+                    "participant": participant.toReactAttributes(),
+                    "videoTrack": videoTrack.toReactAttributes(),
+                    "error": error.localizedDescription
+                ]
+            )
+        }
     }
 
     func localParticipantNetworkQualityLevelDidChange(participant: LocalParticipant, networkQualityLevel: NetworkQualityLevel) {
